@@ -24,7 +24,7 @@ function Index() {
     <main className="fixed inset-0 overflow-hidden bg-background">
       {ready && <Suspense fallback={null}><CourtyardGame /></Suspense>}
       <div className="rotate-hint pointer-events-none absolute inset-x-0 bottom-6 justify-center text-center text-sm text-foreground">
-        Rotate your device to landscape
+        Rotate your device to landscape · drag to look around
       </div>
     </main>
   );

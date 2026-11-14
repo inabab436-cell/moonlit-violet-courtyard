@@ -11,7 +11,7 @@ export default function CourtyardGame() {
       if (cancelled || !ref.current) return;
       game = new Phaser.Game({
         type: Phaser.AUTO, parent: ref.current, width: W, height: H, backgroundColor: "#2a1f7a",
-        scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+        scale: { mode: Phaser.Scale.RESIZE, width: "100%", height: "100%" },
         scene: [CourtyardScene],
       });
     })();
