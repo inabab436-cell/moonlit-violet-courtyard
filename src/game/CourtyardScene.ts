@@ -48,9 +48,9 @@ export class CourtyardScene extends Phaser.Scene {
     this.sideTree(40, 230, false);
     this.sideTree(1630, 230, true);
     // Lanterns
-    [[243, 180], [543, 162], [708, 157], [958, 157], [1116, 162], [1425, 182]].forEach(([x, y]) => this.lantern(x, y));
+    ([[243, 180], [543, 162], [708, 157], [958, 157], [1116, 162], [1425, 182]] as [number, number][]).forEach(([x, y]) => this.lantern(x, y));
     // Pillars
-    [[160, 300], [622, 255], [1042, 255], [1510, 305]].forEach(([x, b]) => this.pillar(x, b));
+    ([[160, 300], [622, 255], [1042, 255], [1510, 305]] as [number, number][]).forEach(([x, b]) => this.pillar(x, b));
     this.drawFloorReflections();
     this.drawAmbient();
 
@@ -104,7 +104,7 @@ export class CourtyardScene extends Phaser.Scene {
 
   private drawBackTrees() {
     const g = this.add.graphics().setDepth(LAYERS.trees);
-    [[380, 85], [760, 70], [1230, 80], [60, 60], [1610, 70]].forEach(([x, y], i) =>
+    ([[380, 85], [760, 70], [1230, 80], [60, 60], [1610, 70]] as [number, number][]).forEach(([x, y], i) =>
       this.bush(g, x, y, 90, 30, 22, "t" + i));
   }
 
@@ -133,12 +133,12 @@ export class CourtyardScene extends Phaser.Scene {
     g.fillStyle(0xffffff, 0.08).fillEllipse(cx, 420, 1500, 220);
     // back curved edge shadow along wall base
     g.fillStyle(0x6a52b0, 0.35);
-    g.fillPoints([{ x: 0, y: 345 }, { x: 215, y: 300 }, { x: 690, y: 250 }, { x: 975, y: 250 }, { x: 1455, y: 302 }, { x: W, y: 345 }, { x: W, y: 360 }, { x: 975, y: 262 }, { x: 690, y: 262 }, { x: 0, y: 360 }], true);
+    g.fillPoints([{ x: 0, y: 345 }, { x: 215, y: 300 }, { x: 690, y: 250 }, { x: 975, y: 250 }, { x: 1455, y: 302 }, { x: W, y: 345 }, { x: W, y: 360 }, { x: 975, y: 262 }, { x: 690, y: 262 }, { x: 0, y: 360 }] as Phaser.Math.Vector2[], true);
   }
 
   private drawFloorReflections() {
     const g = this.add.graphics().setDepth(LAYERS.reflections).setBlendMode(Phaser.BlendModes.ADD);
-    [[243, 290], [543, 265], [708, 252], [958, 252], [1116, 265], [1425, 292], [160, 305], [622, 258], [1042, 258], [1510, 308]].forEach(([x, y], i) => {
+    ([[243, 290], [543, 265], [708, 252], [958, 252], [1116, 265], [1425, 292], [160, 305], [622, 258], [1042, 258], [1510, 308]] as [number, number][]).forEach(([x, y], i) => {
       const len = i > 5 ? 420 : 560;
       for (let s = 0; s < 12; s++) {
         const a = 0.09 * (1 - s / 12);
@@ -191,11 +191,11 @@ export class CourtyardScene extends Phaser.Scene {
     // banner
     const by = top + 44, bw = 50, bh = 130;
     g.fillStyle(0x8a6a4a, 1).fillRect(cx - bw / 2 - 4, by - 4, bw + 8, 5);
-    g.fillStyle(C.banner, 1).fillPoints([{ x: cx - bw / 2, y: by }, { x: cx + bw / 2, y: by }, { x: cx + bw / 2, y: by + bh }, { x: cx, y: by + bh - 18 }, { x: cx - bw / 2, y: by + bh }], true);
+    g.fillStyle(C.banner, 1).fillPoints([{ x: cx - bw / 2, y: by }, { x: cx + bw / 2, y: by }, { x: cx + bw / 2, y: by + bh }, { x: cx, y: by + bh - 18 }, { x: cx - bw / 2, y: by + bh }] as Phaser.Math.Vector2[], true);
     g.fillStyle(C.bannerDark, 1).fillRect(cx + bw / 2 - 8, by, 8, bh - 4);
     g.lineStyle(2.5, C.gold, 1);
     const cy = by + 52;
-    g.strokePoints([{ x: cx - 13, y: cy + 8 }, { x: cx - 15, y: cy - 8 }, { x: cx - 6, y: cy }, { x: cx, y: cy - 12 }, { x: cx + 6, y: cy }, { x: cx + 15, y: cy - 8 }, { x: cx + 13, y: cy + 8 }], true);
+    g.strokePoints([{ x: cx - 13, y: cy + 8 }, { x: cx - 15, y: cy - 8 }, { x: cx - 6, y: cy }, { x: cx, y: cy - 12 }, { x: cx + 6, y: cy }, { x: cx + 15, y: cy - 8 }, { x: cx + 13, y: cy + 8 }] as Phaser.Math.Vector2[], true);
     // top light
     const light = this.add.graphics().setDepth(bottom).setBlendMode(Phaser.BlendModes.ADD);
     for (let r = 30; r > 0; r -= 6) light.fillStyle(C.glow, 0.1).fillCircle(cx, top - 6, r);
