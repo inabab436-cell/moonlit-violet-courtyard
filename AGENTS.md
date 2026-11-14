@@ -28,3 +28,4 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+- Phaser game lives in src/game; loaded client-only via dynamic import. Environment uses y-sort depth (depth = ground-contact Y) so future characters set depth = feet Y; walkable area is the WALKABLE polygon in CourtyardScene.

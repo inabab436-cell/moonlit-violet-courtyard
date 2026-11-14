@@ -19,7 +19,7 @@ export const WALKABLE = [
 
 const C = {
   stone: 0xe9cfe0, stoneShade: 0xc9a9c6, stoneDark: 0xa98aab, stoneLight: 0xf7e6ee,
-  banner: 0x6f4fd8, bannerDark: 0x4f35a8, gold: 0xffe9a8, glow: 0xffd27a,
+  banner: 0x6f4fd8, bannerDark: 0x4f35a8, gold: 0xffe9a8, glow: 0xffa040,
   leaf: 0x3f8f3a, leafLight: 0x6fbf4a, leafDark: 0x2a6230, trunk: 0x6b4a3a,
 };
 
@@ -104,8 +104,8 @@ export class CourtyardScene extends Phaser.Scene {
 
   private drawBackTrees() {
     const g = this.add.graphics().setDepth(LAYERS.trees);
-    [[330, 60], [520, 70], [740, 30], [900, 60], [1180, 60], [1360, 80], [60, 50], [1600, 60]].forEach(([x, y], i) =>
-      this.bush(g, x, y, 110, 50, 40, "t" + i));
+    [[380, 85], [760, 70], [1230, 80], [60, 60], [1610, 70]].forEach(([x, y], i) =>
+      this.bush(g, x, y, 90, 30, 22, "t" + i));
   }
 
   private drawFloor() {
