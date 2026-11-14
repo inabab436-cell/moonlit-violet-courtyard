@@ -23,7 +23,7 @@ function Index() {
   return (
     <main className="fixed inset-0 overflow-hidden bg-background">
       {ready && <Suspense fallback={null}><CourtyardGame /></Suspense>}
-      <div className="rotate-hint pointer-events-none absolute inset-0 items-center justify-center bg-background p-8 text-center text-foreground">
+      <div className="rotate-hint pointer-events-none absolute inset-x-0 bottom-6 justify-center text-center text-sm text-foreground">
         Rotate your device to landscape
       </div>
     </main>
