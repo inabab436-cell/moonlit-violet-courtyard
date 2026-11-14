@@ -1,23 +1,31 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { lazy, Suspense, useEffect, useState } from "react";
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+const CourtyardGame = lazy(() => import("@/game/CourtyardGame"));
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Royal Courtyard — Night Scene" },
+      { name: "description", content: "A layered 2D night-time royal courtyard built in Phaser 3." },
+      { property: "og:title", content: "Royal Courtyard — Night Scene" },
+      { property: "og:description", content: "A layered 2D night-time royal courtyard built in Phaser 3." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="fixed inset-0 overflow-hidden bg-background">
+      {ready && <Suspense fallback={null}><CourtyardGame /></Suspense>}
+      <div className="rotate-hint pointer-events-none absolute inset-0 items-center justify-center bg-background p-8 text-center text-foreground">
+        Rotate your device to landscape
+      </div>
+    </main>
   );
 }
