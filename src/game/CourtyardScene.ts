@@ -59,7 +59,30 @@ export class CourtyardScene extends Phaser.Scene {
     dbg.fillStyle(0x00ff88, 0.18).fillPoints(this.walkable.points, true);
     dbg.lineStyle(3, 0x00ff88, 0.9).strokePoints(this.walkable.points, true);
     this.input.keyboard?.on("keydown-D", () => dbg.setVisible(!dbg.visible));
+    this.setupCamera();
     this.game.events.emit("courtyard-ready", this);
+  }
+
+  /** Immersive camera: fills the whole screen (no letterbox), slightly zoomed in, drag to look around. */
+  private setupCamera() {
+    const cam = this.cameras.main;
+    cam.setBounds(0, 0, W, H);
+    const fit = () => {
+      const { width, height } = this.scale.gameSize;
+      cam.setZoom(Math.max(width / W, height / H) * 1.18);
+    };
+    fit();
+    cam.centerOn(W / 2, H * 0.55);
+    this.scale.on("resize", fit);
+    let last: { x: number; y: number } | null = null;
+    this.input.on("pointerdown", (p: Phaser.Input.Pointer) => { last = { x: p.x, y: p.y }; });
+    this.input.on("pointerup", () => { last = null; });
+    this.input.on("pointermove", (p: Phaser.Input.Pointer) => {
+      if (!last || !p.isDown) return;
+      cam.scrollX -= (p.x - last.x) / cam.zoom;
+      cam.scrollY -= (p.y - last.y) / cam.zoom;
+      last = { x: p.x, y: p.y };
+    });
   }
 
   isWalkable(x: number, y: number) { return this.walkable.contains(x, y); }
