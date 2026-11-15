@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 
 const CourtyardGame = lazy(() => import("@/game/CourtyardGame"));
 
@@ -19,13 +19,13 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [ready, setReady] = useState(false);
+  const [painted, setPainted] = useState(false);
+  const onReady = useCallback(() => setPainted(true), []);
   useEffect(() => setReady(true), []);
   return (
     <main className="fixed inset-0 overflow-hidden bg-background">
-      {ready && <Suspense fallback={null}><CourtyardGame /></Suspense>}
-      <div className="rotate-hint pointer-events-none absolute inset-x-0 bottom-6 justify-center text-center text-sm text-foreground">
-        Rotate your device to landscape · drag to look around
-      </div>
+      {ready && <Suspense fallback={null}><CourtyardGame onReady={onReady} /></Suspense>}
+      {!painted && <div className="courtyard-loading absolute inset-0 flex items-center justify-center bg-background" role="status" aria-label="جاري فتح الساحة"><span className="courtyard-loader" /></div>}
     </main>
   );
 }

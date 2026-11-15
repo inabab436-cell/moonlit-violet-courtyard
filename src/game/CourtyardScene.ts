@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { courtyardZoom } from "./viewport";
 
 /** Design resolution — the scene is authored at this size and scaled with FIT. */
 export const W = 1672;
@@ -24,7 +25,7 @@ const C = {
 };
 
 export class CourtyardScene extends Phaser.Scene {
-  walkable!: Phaser.Geom.Polygon;
+  walkable = new Phaser.Geom.Polygon(WALKABLE);
   constructor() { super("Courtyard"); }
 
   create() {
@@ -69,11 +70,12 @@ export class CourtyardScene extends Phaser.Scene {
     cam.setBounds(0, 0, W, H);
     const fit = () => {
       const { width, height } = this.scale.gameSize;
-      cam.setZoom(Math.max(width / W, height / H) * 1.18);
+      cam.setZoom(courtyardZoom(width, height, W, H));
+      cam.centerOn(W / 2, H / 2);
     };
     fit();
-    cam.centerOn(W / 2, H * 0.55);
     this.scale.on("resize", fit);
+    this.events.once("shutdown", () => this.scale.off("resize", fit));
     let last: { x: number; y: number } | null = null;
     this.input.on("pointerdown", (p: Phaser.Input.Pointer) => { last = { x: p.x, y: p.y }; });
     this.input.on("pointerup", () => { last = null; });
@@ -119,6 +121,10 @@ export class CourtyardScene extends Phaser.Scene {
       g.fillStyle(C.leafDark, 1).fillCircle(x, y + 3, r);
       g.fillStyle(C.leaf, 1).fillCircle(x, y, r * 0.9);
       g.fillStyle(C.leafLight, 0.8).fillCircle(x - r * 0.3, y - r * 0.35, r * 0.45);
+      for (let j = 0; j < 4; j++) {
+        const lx = x + rnd.realInRange(-r * 0.7, r * 0.7), ly = y + rnd.realInRange(-r * 0.7, r * 0.4);
+        g.fillStyle(j % 2 ? C.leafLight : C.leafDark, 0.65).fillEllipse(lx, ly, 8, 3);
+      }
     }
     if (flowers) for (let i = 0; i < n * 1.2; i++) {
       g.fillStyle(rnd.pick([0xffe27a, 0xf4a8c8, 0xffffff]), 1).fillCircle(cx + rnd.realInRange(-rx, rx), cy + rnd.realInRange(-ry, ry * 0.5), 2.5);
@@ -137,7 +143,7 @@ export class CourtyardScene extends Phaser.Scene {
     g.fillGradientStyle(0xc2b0e6, 0xc2b0e6, 0x8a74d0, 0x8a74d0, 1).fillRect(0, top, W, H - top);
     // perspective diagonal tile grid, vanishing toward horizon
     const vpY = -900, cx = W / 2;
-    g.lineStyle(1.5, 0x7a63c0, 0.35);
+    g.lineStyle(1.2, 0x7a63c0, 0.28);
     const toY = (t: number) => top + (H - top) * t * t * 0.4 + (H - top) * 0.6 * t;
     for (let k = -40; k <= 40; k++) {
       for (const dir of [-1, 1]) {
@@ -165,7 +171,8 @@ export class CourtyardScene extends Phaser.Scene {
       const len = i > 5 ? 420 : 560;
       for (let s = 0; s < 12; s++) {
         const a = 0.09 * (1 - s / 12);
-        g.fillStyle(C.glow, a).fillRect(x - 10 - s * 0.8, y + (s * len) / 12, 20 + s * 1.6, len / 12 + 2);
+        g.fillStyle(C.gold, a * 0.65).fillEllipse(x, y + (s * len) / 12 + 12, 12 + s * 4, len / 16);
+        g.fillStyle(C.glow, a * 0.45).fillEllipse(x, y + (s * len) / 12 + 12, 26 + s * 6, len / 14);
       }
     });
     this.tweens.add({ targets: g, alpha: { from: 0.85, to: 1 }, duration: 1800, yoyo: true, repeat: -1, ease: "Sine.inOut" });
@@ -177,6 +184,11 @@ export class CourtyardScene extends Phaser.Scene {
     g.fillStyle(C.stoneLight, 1).fillRect(x1 - 4, top, x2 - x1 + 8, 16);
     g.fillStyle(C.stoneDark, 1).fillRect(x1 - 4, top + 14, x2 - x1 + 8, 4);
     g.fillStyle(C.stoneDark, 0.6).fillRect(x1, bottom - 8, x2 - x1, 8);
+    g.lineStyle(1, C.stoneDark, 0.22);
+    for (let y = top + 46, row = 0; y < bottom - 8; y += 34, row++) {
+      g.lineBetween(x1, y, x2, y);
+      for (let x = x1 + (row % 2 ? 35 : 70); x < x2; x += 90) g.lineBetween(x, y - 32, x, y);
+    }
   }
 
   private planter(x1: number, x2: number, top: number, bottom: number, _tilt: number, big = false) {
@@ -185,6 +197,10 @@ export class CourtyardScene extends Phaser.Scene {
     g.fillStyle(C.stoneLight, 1).fillRect(x1 - 3, top, x2 - x1 + 6, 10);
     g.fillGradientStyle(C.stone, C.stone, C.stoneShade, C.stoneShade, 1).fillRect(x1, top + 10, x2 - x1, bottom - top - 10);
     g.lineStyle(2, C.stoneDark, 0.6).strokeRect(x1, top + 10, x2 - x1, bottom - top - 10);
+    g.lineStyle(1, C.stoneLight, 0.7).lineBetween(x1 + 6, top + 15, x2 - 6, top + 15);
+    if (!big) {
+      g.lineStyle(1, C.stoneDark, 0.3).strokeRect(x1 + 12, top + 20, x2 - x1 - 24, bottom - top - 29);
+    }
   }
 
   private sideTree(x: number, baseY: number, flip: boolean) {
@@ -207,6 +223,8 @@ export class CourtyardScene extends Phaser.Scene {
     const w = 100, top = 48, g = this.add.graphics().setDepth(bottom);
     g.fillGradientStyle(C.stoneLight, C.stoneShade, C.stoneLight, C.stoneShade, 1).fillRect(cx - w / 2 + 6, top + 26, w - 12, bottom - top - 40);
     g.fillStyle(C.stoneDark, 0.5).fillRect(cx + w / 2 - 18, top + 26, 12, bottom - top - 40);
+    g.lineStyle(1, C.stoneDark, 0.18);
+    for (let x = cx - 32; x <= cx + 32; x += 16) g.lineBetween(x, top + 30, x, bottom - 20);
     g.fillStyle(C.stoneLight, 1).fillRect(cx - w / 2 - 4, top, w + 8, 14);
     g.fillStyle(C.stone, 1).fillRect(cx - w / 2, top + 14, w, 12);
     g.fillStyle(C.stone, 1).fillRect(cx - w / 2, bottom - 18, w, 18);
@@ -216,6 +234,8 @@ export class CourtyardScene extends Phaser.Scene {
     g.fillStyle(0x8a6a4a, 1).fillRect(cx - bw / 2 - 4, by - 4, bw + 8, 5);
     g.fillStyle(C.banner, 1).fillPoints([{ x: cx - bw / 2, y: by }, { x: cx + bw / 2, y: by }, { x: cx + bw / 2, y: by + bh }, { x: cx, y: by + bh - 18 }, { x: cx - bw / 2, y: by + bh }] as Phaser.Math.Vector2[], true);
     g.fillStyle(C.bannerDark, 1).fillRect(cx + bw / 2 - 8, by, 8, bh - 4);
+    g.lineStyle(1, C.gold, 0.6).lineBetween(cx - bw / 2 + 4, by + 5, cx - bw / 2 + 4, by + bh - 7);
+    g.lineStyle(1, C.stoneLight, 0.12).lineBetween(cx - 12, by + 4, cx - 12, by + bh - 12);
     g.lineStyle(2.5, C.gold, 1);
     const cy = by + 52;
     g.strokePoints([{ x: cx - 13, y: cy + 8 }, { x: cx - 15, y: cy - 8 }, { x: cx - 6, y: cy }, { x: cx, y: cy - 12 }, { x: cx + 6, y: cy }, { x: cx + 15, y: cy - 8 }, { x: cx + 13, y: cy + 8 }] as Phaser.Math.Vector2[], true);
