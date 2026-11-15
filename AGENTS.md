@@ -29,3 +29,5 @@ use the editor.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
 - Phaser game lives in src/game; loaded client-only via dynamic import. Environment uses y-sort depth (depth = ground-contact Y) so future characters set depth = feet Y; walkable area is the WALKABLE polygon in CourtyardScene.
+- Size the Phaser canvas with a capped device-pixel ratio and use the shared cover-camera calculation; upright screens retain the scene height while all orientations fill the viewport.
+- Keep the neutral startup overlay until Phaser's first rendered frame, so asynchronous engine loading never exposes the sky-colored empty canvas.

@@ -1,0 +1,3 @@
+- [ ] Remove the blue startup flash.
+- [ ] Frame the courtyard naturally in portrait and landscape.
+- [ ] Refine environment detail and verify both phone orientations.
